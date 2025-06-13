@@ -2,7 +2,6 @@ from fastapi import APIRouter, Request, HTTPException, Form
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 import json
-import os
 from apps.util.config import get_redis_conn, get_postgres_conn, load_config
 from apps.util.logger import make_logger
 from apps.util.faults import set_fault
@@ -11,9 +10,8 @@ router = APIRouter()
 config = load_config()
 logger = make_logger("Route")
 
-SITE_GRAPH_PATH = "/home/zoot/projects/wireless-sensor-mesh-daq/dataserver/apps/site_graph_TEST.json"
-
-templates = Jinja2Templates(directory="/home/zoot/projects/wireless-sensor-mesh-daq/dataserver/apps/templates")
+SITE_GRAPH_PATH = "/home/pmikol/projects/wireless-sensor-mesh-daq/dataserver/apps/site_graph_TEST.json"
+templates = Jinja2Templates(directory="/home/pmikol/projects/wireless-sensor-mesh-daq/dataserver/apps/templates")
 
 def normalize_mac(raw):
     try:
@@ -33,7 +31,6 @@ async def mapviewer(request: Request):
 
 @router.get("/sitearray/map/layout", response_class=JSONResponse)
 async def get_panel_layout():
-    
     try:
         pg = get_postgres_conn()
         with pg.cursor() as cur:
@@ -66,7 +63,6 @@ async def get_panel_layout():
 
             walk(graph_json.get("sitearray", {}))
             return JSONResponse(content=layout)
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {e}")
 
@@ -122,11 +118,8 @@ async def sitearray_map_status():
                 })
 
         return JSONResponse(content=response)
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {e}")
-
-
 
 @router.get("/site_graph_TEST.json")
 async def get_site_graph():

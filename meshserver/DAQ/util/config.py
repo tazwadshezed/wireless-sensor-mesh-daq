@@ -2,7 +2,7 @@ import os
 import yaml
 import redis
 
-DEFAULT_SITE_CONFIG = "/home/zoot/projects/wireless-sensor-mesh-daq/meshserver/DAQ/util/config.yaml"
+DEFAULT_SITE_CONFIG = "/home/pmikol/projects/wireless-sensor-mesh-daq/meshserver/DAQ/util/config.yaml"
 
 _config = None
 

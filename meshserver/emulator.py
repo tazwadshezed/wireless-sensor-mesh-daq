@@ -22,7 +22,8 @@ PANEL_MACS = [
     "fa:29:eb:6d:87:01",
     "fa:29:eb:6d:87:02",
     "fa:29:eb:6d:87:03",
-    "fa:29:eb:6d:87:04",
+    "fa:29:eb:6d:87:04"
+  
 ]
 
 STATUS_PROFILES = {
@@ -34,10 +35,17 @@ STATUS_PROFILES = {
 }
 STATUS_KEYS = list(STATUS_PROFILES.keys())
 
+FAULTS = ["short_circuit", "open_circuit", "low_voltage", "dead_panel", "no_fault"]
+
+def safe_int16(val):
+    return max(-32768, min(32767, int(val)))
+
 
 def generate_profile(macaddr):
     mac = macaddr.lower()
-    fault = get_fault(mac)  # ✅ Check if a fault is active
+#    fault = get_fault(mac)  # ✅ Check if a fault is active
+#    if fault == "random":
+    fault = random.choice(FAULTS)
 
     if fault == "short_circuit":
         Vi = 0.0
@@ -50,18 +58,21 @@ def generate_profile(macaddr):
         Ii = random.uniform(6.0, 7.5)
     elif fault == "dead_panel":
         Vi, Ii = 0.0, 0.0
-    else:
+    elif fault == "no_fault":
         # Normal
         Vi = random.uniform(38.0, 40.0)
         Ii = random.uniform(7.0, 8.0)
 
     Pi = round(Vi * Ii, 2)
+    Pi = safe_int16(Pi * 100) / 100.0  # ✅ clip to prevent overflow
+
     return {
         "voltage": round(Vi, 2),
         "current": round(Ii, 2),
         "power": Pi,
         "status": fault
     }
+
 
 
 class AsyncEmulator:
@@ -96,7 +107,7 @@ class AsyncEmulator:
                     s.close()
                     return addr[0]
             except asyncio.TimeoutError:
-                pass
+                print("[EMULATOR] No POLO yet, retrying...")
             except Exception as e:
                 print(f"[EMULATOR] Error: {e}")
 

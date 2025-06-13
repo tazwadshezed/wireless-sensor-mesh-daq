@@ -11,7 +11,7 @@ def get_fault(mac: str) -> str:
     val = r.get(f"fault_injection:{mac}")
     if val:
         return val
-    return "normal"
+    return "no_fault"
 
 def reset_fault(mac: str):
     r = get_redis_conn(db=3)

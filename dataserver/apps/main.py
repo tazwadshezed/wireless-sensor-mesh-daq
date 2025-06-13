@@ -2,6 +2,9 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from dotenv import load_dotenv
+
+load_dotenv()  # Pulls in values from .env
 
 # Import all routers
 from apps.routes import router as main_router
@@ -31,4 +34,10 @@ async def root():
 
 # Entrypoint to run directly
 if __name__ == "__main__":
-    uvicorn.run("dataserver.main:app", host="0.0.0.0", port=8000, reload=True)
+     uvicorn.run(
+        "dataserver.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        proxy_headers=True
+    )
